@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: Verdana;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.button2 {background-color: #008CBA;} /* Blue */
+.button3 {background-color: #f44336;} /* Red */ 
+.button4 {background-color: #FFA500} /* orange */ 
+.button5 {background-color: #FFFF00;} /* yellow */
+.button6 {background-color: #00FF00;} /* Green */
+.button7 {background-color: #00FF00;} /* Green, accelerate */
+.button8 {background-color: #f44336;} /* Red for restart */
+.button8 {background-color: #f44336;} /* Red for restart */
+.button9 {background-color: #00FF00;} /* Green for easy */
+.button10 {background-color: #FFA500;} /* Orange for Medium */
+.button11 {background-color: #f44336;} /* Red hard */
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+</style>
+</head>
+<body <body bgcolor="#CACACA"onload="startGame()">
+<script>
+
+var myGamePiece;
+var myObstacles = [];
+var myScore;
+var currentColor = "red";
+var currentWidth = 30;
+var currentHeight = 30;
+
+function startGame() {
+    myGamePiece = new component(currentWidth, currentHeight, currentColor, 10, 120);
+    myGamePiece.gravity = 0.05;
+    myScore = new component("30px", "Consolas", "black", 280, 40, "text");
+    myGameArea.start();
+}
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 700;
+        this.canvas.height = 300;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.frameNo = 0;
+        this.interval = setInterval(updateGameArea, 20);
+        },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+}
+
+function component(width, height, color, x, y, type) {
+    this.type = type;
+    this.score = 0;
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;    
+    this.x = x;
+    this.y = y;
+    this.gravity = 0;
+    this.gravitySpeed = 0;
+    this.update = function() {
+        ctx = myGameArea.context;
+        if (this.type == "text") {
+            ctx.font = this.width + " " + this.height;
+            ctx.fillStyle = color;
+            ctx.fillText(this.text, this.x, this.y);
+        } else {
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+    }
+    this.newPos = function() {
+        this.gravitySpeed += this.gravity;
+        this.x += this.speedX;
+        this.y += this.speedY + this.gravitySpeed;
+        this.hitBottom();
+    }
+    this.hitBottom = function() {
+        var rockbottom = myGameArea.canvas.height - this.height;
+        if (this.y > rockbottom) {
+            this.y = rockbottom;
+            this.gravitySpeed = 0;
+        }
+    }
+    this.crashWith = function(otherobj) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = otherobj.x;
+        var otherright = otherobj.x + (otherobj.width);
+        var othertop = otherobj.y;
+        var otherbottom = otherobj.y + (otherobj.height);
+        var crash = true;
+        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+            crash = false;
+        }
+        return crash;
+    }
+}
+
+function updateGameArea() {
+    var x, height, gap, minHeight, maxHeight, minGap, maxGap;
+    for (i = 0; i < myObstacles.length; i += 1) {
+        if (myGamePiece.crashWith(myObstacles[i])) {
+            return;
+        } 
+    }
+    myGameArea.clear();
+    myGameArea.frameNo += 1;
+    if (myGameArea.frameNo == 1 || everyinterval(150)) {
+        x = myGameArea.canvas.width;
+        minHeight = 5;
+        maxHeight = 300;
+        height = Math.floor(Math.random()*(maxHeight-minHeight+1)+minHeight);
+        minGap = 50;
+        maxGap = 200;
+        gap = Math.floor(Math.random()*(maxGap-minGap+1)+minGap);
+        myObstacles.push(new component(10, height, "green", x, 0));
+        myObstacles.push(new component(10, x - height - gap, "green", x, height + gap));
+    }
+    for (i = 0; i < myObstacles.length; i += 1) {
+        myObstacles[i].x += -1;
+        myObstacles[i].update();
+    }
+    myScore.text="SCORE: " + myGameArea.frameNo;
+    myScore.update();
+    myGamePiece.newPos();
+    myGamePiece.update();
+}
+
+function everyinterval(n) {
+    if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+    return false;
+}
+
+function accelerate(n) {
+    myGamePiece.gravity = n;
+}
+function colorChange(color) {
+currentColor = color;
+myGamePiece = new component(currentWidth, currentHeight, currentColor, 10, 120);
+accelerate(0.5);
+}
+function difficulty (width, height) {
+currentWidth= width;
+currentHeight= height;
+myGamePiece = new component(currentWidth, currentHeight, currentColor, 10, 120);
+}
+
+</script>
+<br>
+<button class="button button7" onmousedown="accelerate(-0.2)" onmouseup="accelerate(0.05)"><font color="black">UP</font></button>
+<br>
+<br>
+<button class="button button8" value="Refresh Page" onClick="history.go(0);">RESTART</button>
+<font face="Verdana"><p>Use the <strong>UP</strong> button to stay in the air, and if you die click <strong>RESTART</strong> to restart the game</p>
+<p>The buttons below will let you choose your color and difficulty. Please pick your color and then difficulty!</p>
+<h2><strong>COLOR</strong></h2>
+<button class="button button3"onclick="colorChange('red')">Red</button>
+<button class="button button4"onclick="colorChange('orange')">Orange</button>
+<button class="button button5"onclick="colorChange('yellow')"><font color="black">Yellow</font></button>
+<button class="button button6"onclick="colorChange('lime')"><font color="black">Green</font></button>
+<button class="button button2"onclick="colorChange('blue')">Blue</button>
+<br>
+<h2><strong>DIFFICULTY</strong></h2>
+<button class="button button9" onclick="difficulty (30, 30)"><font color="black">Easy</font></button>
+<button class="button button10"onclick="difficulty (40, 40)">Medium</button>
+<button class="button button11"onclick="difficulty (50, 50)">Hard</button>
+<H2>CHANGE LOG</h2>
+<p><strong>0.1</strong> Beta Version of game released, very simple many bugs</p>
+<p><strong>0.1.1</strong> Added ability to change the color of your character</p>
+<p><strong>0.1.2</strong> Added ability to change the difficulty of your game</p>
+<p><strong>0.1.2.1 HOTFIX</strong> Fixed bug where yoour character would not stay the same difficulty if you changed the color</p>
+<br>
+<br>
+<h2>Developer Notes</h2>
+<p>As you know I cannot see all bugs when I release a new version, feel free to report bugs to me on discord!</p>
+<p>Codebase was created off of W3 schools but all programming design and bugfixing is done by <strong>Drew Novak</strong></p>
+</font>
+</body>
+</html>
