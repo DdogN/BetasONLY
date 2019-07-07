@@ -2,14 +2,14 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<style> 
+<style>
 .button {
   background-color: #4CAF50; /* Green */
   border: none;
   color: white;
   padding: 15px 32px;
   text-align: center;
-  text-decoration: none;
+  text-decoration: Verdana;
   display: inline-block;
   font-size: 16px;
   margin: 4px 2px;
@@ -23,6 +23,10 @@
 .button6 {background-color: #00FF00;} /* Green */
 .button7 {background-color: #00FF00;} /* Green, accelerate */
 .button8 {background-color: #f44336;} /* Red for restart */
+.button8 {background-color: #f44336;} /* Red for restart */
+.button9 {background-color: #00FF00;} /* Green for easy */
+.button10 {background-color: #FFA500;} /* Orange for Medium */
+.button11 {background-color: #f44336;} /* Red hard */
 canvas {
     border:1px solid #d3d3d3;
     background-color: #f1f1f1;
@@ -36,9 +40,11 @@ var myGamePiece;
 var myObstacles = [];
 var myScore;
 var currentColor = "red";
+var currentWidth = 30;
+var currentHeight = 30;
 
 function startGame() {
-    myGamePiece = new component(30, 30, currentColor, 10, 120);
+    myGamePiece = new component(currentWidth, currentHeight, currentColor, 10, 120);
     myGamePiece.gravity = 0.05;
     myScore = new component("30px", "Consolas", "black", 280, 40, "text");
     myGameArea.start();
@@ -151,28 +157,44 @@ function accelerate(n) {
 }
 function colorChange(color) {
 currentColor = color;
-myGamePiece = new component(30, 30, currentColor, 10, 120);
+myGamePiece = new component(currentWidth, currentHeight, currentColor, 10, 120);
 accelerate(0.5);
 }
 function difficulty (width, height) {
-myGamePiece = new component(width, height, currentColor, 10, 120);
+currentWidth= width;
+currentHeight= height;
+myGamePiece = new component(currentWidth, currentHeight, currentColor, 10, 120);
 }
 
 </script>
-<button class="button button7" onmousedown="accelerate(-0.2)" onmouseup="accelerate(0.05)"><font color="black">ACCELERATE</font></button>
+<br>
+<button class="button button7" onmousedown="accelerate(-0.2)" onmouseup="accelerate(0.05)"><font color="black">UP</font></button>
 <br>
 <br>
 <button class="button button8" value="Refresh Page" onClick="history.go(0);">RESTART</button>
-<p>Use the ACCELERATE button to stay in the air, and if you die click restart to restart the game</p>
-<p>Theses buttons below change the color of your character!!</p>
+<font face="Verdana"><p>Use the <strong>UP</strong> button to stay in the air, and if you die click <strong>RESTART</strong> to restart the game</p>
+<p>The buttons below will let you choose your color and difficulty. Please pick your color and then difficulty!</p>
+<h2><strong>COLOR</strong></h2>
 <button class="button button3"onclick="colorChange('red')">Red</button>
 <button class="button button4"onclick="colorChange('orange')">Orange</button>
 <button class="button button5"onclick="colorChange('yellow')"><font color="black">Yellow</font></button>
 <button class="button button6"onclick="colorChange('lime')"><font color="black">Green</font></button>
 <button class="button button2"onclick="colorChange('blue')">Blue</button>
 <br>
-<button onclick="difficulty (40, 40)">Medium</button>
-
-<p>How long can <strong>YOU</strong> stay alive?</p>
+<h2><strong>DIFFICULTY</strong></h2>
+<button class="button button9" onclick="difficulty (30, 30)"><font color="black">Easy</font></button>
+<button class="button button10"onclick="difficulty (40, 40)">Medium</button>
+<button class="button button11"onclick="difficulty (50, 50)">Hard</button>
+<H2>CHANGE LOG</h2>
+<p><strong>0.1</strong> Beta Version of game released, very simple many bugs</p>
+<p><strong>0.1.1</strong> Added ability to change the color of your character</p>
+<p><strong>0.1.2</strong> Added ability to change the difficulty of your game</p>
+<p><strong>0.1.2.1 HOTFIX</strong> Fixed bug where yoour character would not stay the same difficulty if you changed the color</p>
+<br>
+<br>
+<h2>Developer Notes</h2>
+<p>As you know I cannot see all bugs when I release a new version, feel free to report bugs to me on discord!</p>
+<p>Codebase was created off of W3 schools but all programming design and bugfixing is done by <strong>Drew Novak</strong></p>
+</font>
 </body>
 </html>
