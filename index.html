@@ -3,6 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <style>
+body {touch-action:manipulation;}
 .button {
   background-color: #4CAF50; /* Green */
   border: none;
@@ -14,6 +15,7 @@
   font-size: 16px;
   margin: 4px 2px;
   cursor: pointer;
+ 
 }
 
 .button2 {background-color: #008CBA;} /* Blue */
@@ -33,7 +35,7 @@ canvas {
 }
 </style>
 </head>
-<body <body bgcolor="#CACACA"onload="startGame()">
+<body bgcolor="#CACACA"onload="startGame()">
 <script>
 
 var myGamePiece;
@@ -46,7 +48,7 @@ var currentHeight = 30;
 function startGame() {
     myGamePiece = new component(currentWidth, currentHeight, currentColor, 10, 120);
     myGamePiece.gravity = 0.05;
-    myScore = new component("30px", "Consolas", "black", 280, 40, "text");
+    myScore = new component("30px", "Verdana", "black", 280, 40, "text");
     myGameArea.start();
 }
 
@@ -92,6 +94,7 @@ function component(width, height, color, x, y, type) {
         this.x += this.speedX;
         this.y += this.speedY + this.gravitySpeed;
         this.hitBottom();
+		this.hitTop();
     }
     this.hitBottom = function() {
         var rockbottom = myGameArea.canvas.height - this.height;
@@ -100,6 +103,12 @@ function component(width, height, color, x, y, type) {
             this.gravitySpeed = 0;
         }
     }
+	this.hitTop = function() {
+        if (this.y <= 0) {
+            this.y = 0;
+            this.gravitySpeed = 0;
+        }
+	}
     this.crashWith = function(otherobj) {
         var myleft = this.x;
         var myright = this.x + (this.width);
@@ -117,6 +126,16 @@ function component(width, height, color, x, y, type) {
     }
 }
 
+function save() {
+	localStorage.setItem("color", currentColor);
+}
+
+function load() {
+	currentColor = localStorage.getItem("color");
+	myGamePiece = new component(currentWidth, currentHeight, currentColor, 10, 120);
+	accelerate(0.5);
+}
+
 function updateGameArea() {
     var x, height, gap, minHeight, maxHeight, minGap, maxGap;
     for (i = 0; i < myObstacles.length; i += 1) {
@@ -128,14 +147,15 @@ function updateGameArea() {
     myGameArea.frameNo += 1;
     if (myGameArea.frameNo == 1 || everyinterval(150)) {
         x = myGameArea.canvas.width;
-        minHeight = 5;
-        maxHeight = 300;
+        minHeight = 30;
+        maxHeight = 60;
         height = Math.floor(Math.random()*(maxHeight-minHeight+1)+minHeight);
-        minGap = 50;
+        minGap = 60;
         maxGap = 200;
         gap = Math.floor(Math.random()*(maxGap-minGap+1)+minGap);
         myObstacles.push(new component(10, height, "green", x, 0));
         myObstacles.push(new component(10, x - height - gap, "green", x, height + gap));
+		
     }
     for (i = 0; i < myObstacles.length; i += 1) {
         myObstacles[i].x += -1;
@@ -166,12 +186,16 @@ currentHeight= height;
 myGamePiece = new component(currentWidth, currentHeight, currentColor, 10, 120);
 }
 
+load();
+
+
 </script>
 <br>
 <button class="button button7" onmousedown="accelerate(-0.2)" onmouseup="accelerate(0.05)"><font color="black">UP</font></button>
 <br>
 <br>
 <button class="button button8" value="Refresh Page" onClick="history.go(0);">RESTART</button>
+<button class="button" value="Save" onClick="save();">SAVE</button> 
 <font face="Verdana"><p>Use the <strong>UP</strong> button to stay in the air, and if you die click <strong>RESTART</strong> to restart the game</p>
 <p>The buttons below will let you choose your color and difficulty. Please pick your color and then difficulty!</p>
 <h2><strong>COLOR</strong></h2>
@@ -187,9 +211,10 @@ myGamePiece = new component(currentWidth, currentHeight, currentColor, 10, 120);
 <button class="button button11"onclick="difficulty (50, 50)">Hard</button>
 <H2>CHANGE LOG</h2>
 <p><strong>0.1</strong> Beta Version of game released, very simple many bugs</p>
-<p><strong>0.1.1</strong> Added ability to change the color of your character</p>
-<p><strong>0.1.2</strong> Added ability to change the difficulty of your game</p>
-<p><strong>0.1.2.1 HOTFIX</strong> Fixed bug where yoour character would not stay the same difficulty if you changed the color</p>
+<p><strong>0.1.2</strong> Added ability to change the color of your character</p>
+<p><strong>0.1.5</strong> Added ability to change the difficulty of your game</p>
+<p><strong>0.1.5.1 HOTFIX</strong> Fixed bug where yoour character would not stay the same difficulty if you changed the color</p>
+<p><strong>0.2.0</strong> Added the save feature and fixed many bugs. Thanks to <strong>Owen Hobbs</strong> for helping with this update!!!</p>
 <br>
 <br>
 <h2>Developer Notes</h2>
